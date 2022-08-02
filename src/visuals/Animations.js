@@ -1,14 +1,20 @@
  
- function drawCardAnimation(index,target){
+ function drawPlayerCardAnimation(index){
     return(
             {
                 rotateZ: 360,
-                x:-700+70*index,
-                y:target==='dealer'?-400:400,
+                x: -700+70*index,
+                y: 375,
             }
         )
     }
-
-
-
-export {drawCardAnimation};
+function drawDealerCardAnimation(index){
+    return(
+            {
+                rotateZ: 360,
+                x: -700+70*index,
+                y: -375,
+            }
+        )
+    }
+export {drawPlayerCardAnimation,drawDealerCardAnimation};

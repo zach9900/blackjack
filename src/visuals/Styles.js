@@ -60,7 +60,7 @@ export const styles ={
     card:
     {
       position: 'absolute',  
-      zIndex: 2,
+      zIndex: 3,
       marginLeft: 1070,
       marginTop:500
     },
@@ -77,24 +77,52 @@ export const styles ={
       marginBottom: 100,
     },
 
-    btnDillersTurn:
+    btnStand:
     {
       position:'relative',
       width: 350,
-      height: 90,
+      height: 100,
       zIndex: 2,
       marginTop: 'auto',
       marginLeft: 'auto',
       marginRight: 'auto',
-      marginBottom: 20,
+      marginBottom: 10,
+    },
+
+    btnHit:
+    {
+      position:'absolute',
+      width: 225,
+      height: 100,
+      zIndex: 2,
+      marginTop: 1187,
+      marginLeft: 910,
+    },
+
+    btnDouble:
+    {
+      position:'absolute',
+      width: 350,
+      height: 100,
+      zIndex: 2,
+      marginTop: 1187,
+      marginLeft: 75,
     },
 
     revealedCard:
     {
       position: 'absolute',  
-      zIndex: 3,
+      zIndex: 2,
       marginLeft: 370,
-      marginTop:100,
+      marginTop:125,
+    },
+
+    firstDealerCard:
+    {
+      position: 'absolute',  
+      zIndex: 1,
+      marginLeft: 1070,
+      marginTop:500
     },
 
 
