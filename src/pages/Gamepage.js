@@ -7,6 +7,7 @@ import {
   drawDealerCardAnimation,
 } from "../visuals/Animations";
 import Typography from "@mui/material/Typography";
+import { getDeck } from "../services/service";
 
 function Gamepage() {
   const [deck, setDeck] = useState([]);
@@ -59,20 +60,16 @@ function Gamepage() {
 
   const first = useRef(true); //in order to prevent the effect of react strict we use ref to keep alive the first var which tells us if the useEffect hasnt been executed yes
 
-  useEffect(() =>
-    //fetching deck only once
-    {
+  useEffect(() => {
+    return async () => {
       if (first.current) {
+        //fetching deck only once
         first.current = false;
-        getDeck();
+        let data = await getDeck();
+        setDeck(data);
       }
-    }, []);
-
-  const getDeck = async () => {
-    const res = await fetch("http://localhost:5000/deck/shuffled");
-    const data = await res.json();
-    setDeck(data);
-  };
+    };
+  }, []);
 
   const countCards = (hand) => {
     let res = 0;
