@@ -19,6 +19,15 @@ export const styles ={
       color: 'gold'
     },
 
+    results:
+    {
+      position:'absolute',
+      marginTop: 75,
+      marginLeft: 40,
+      fontFamily: "Algerian",
+      color: 'gold'
+    },
+
     btnBG:
     {
       position:'relative',
@@ -79,14 +88,12 @@ export const styles ={
 
     btnStand:
     {
-      position:'relative',
+      position:'absolute',
       width: 350,
       height: 100,
       zIndex: 2,
-      marginTop: 'auto',
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      marginBottom: 10,
+      marginTop: 1187,
+      marginLeft: 483,
     },
 
     btnHit:
@@ -95,7 +102,7 @@ export const styles ={
       width: 225,
       height: 100,
       zIndex: 2,
-      marginTop: 1187,
+      marginTop: 1186,
       marginLeft: 910,
     },
 
@@ -109,14 +116,6 @@ export const styles ={
       marginLeft: 75,
     },
 
-    revealedCard:
-    {
-      position: 'absolute',  
-      zIndex: 2,
-      marginLeft: 370,
-      marginTop:125,
-    },
-
     firstDealerCard:
     {
       position: 'absolute',  
@@ -124,6 +123,24 @@ export const styles ={
       marginLeft: 1070,
       marginTop:500
     },
+
+    playersCounter:
+    {
+      position: 'absolute',  
+      marginTop: 100,
+      marginLeft: 35,
+      fontFamily: "Algerian",
+      color: 'gold'
+    },
+
+    dealersCounter:
+    {
+      position: 'absolute',  
+      marginTop: 5,
+      marginLeft: 35,
+      fontFamily: "Algerian",
+      color: 'gold'
+    }
 
 
   };

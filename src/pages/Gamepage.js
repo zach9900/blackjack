@@ -3,19 +3,16 @@ import { useEffect, useRef, useState } from 'react';
 import Card from '../components/Card'
 import {styles} from '../visuals/Styles'
 import { drawPlayerCardAnimation , drawDealerCardAnimation } from '../visuals/Animations'
+import Typography from '@mui/material/Typography';
  
 function Gamepage() {
 
-  let currentToDraw = 0;
-  let showDrawnPlayerCard = useRef(false);
-  let showDrawnDealerCard = useRef(false);
-
   const [deck, setDeck] = useState([]);
-
   const [dealerHand, setDealerHand] = useState([]);
   const [playerHand, setPlayerHand] = useState([]);
+  const [screenState, setScreenState] = useState('placeBet');
 
-  useEffect(()=>
+  useEffect(()=>//dealersHand
   {
     if(dealerHand.length === 1)
     {
@@ -23,11 +20,6 @@ function Gamepage() {
     }
 
     if(dealerHand.length>0) {
-
-      console.log('dealer: ');
-    console.log(dealerHand);
-    console.log(countCards(dealerHand).cardsCount)
-      showDrawnDealerCard.current = true;
 
       if (isBlackJack(dealerHand)) {
         setScreenState('dealersTurn');
@@ -40,7 +32,7 @@ function Gamepage() {
   // eslint-disable-next-line
   },[dealerHand]);
 
-  useEffect(()=>
+  useEffect(()=>//playersHand
   { 
     if(playerHand.length === 1 || playerHand.length === 2)
     {
@@ -48,23 +40,15 @@ function Gamepage() {
     }
 
     if(playerHand.length>0) {
-
-      showDrawnPlayerCard.current = true;
-
-    console.log('player: ');
-    console.log(playerHand);
-    console.log(countCards(playerHand).cardsCount)
-
-    if (countCards(playerHand).isBusted || isBlackJack(playerHand)) {
-      setScreenState('dealersTurn')
-    }
+      if (countCards(playerHand).isBusted || isBlackJack(playerHand)) {
+        setScreenState('dealersTurn')
+      }
   }
   // eslint-disable-next-line
   },[playerHand]);
 
-  const [screenState, setScreenState] = useState('placeBet')
-
-  useEffect(()=>{
+  
+  useEffect(()=>{//screenState
 
     if(screenState==='dealersTurn')
     {
@@ -75,7 +59,7 @@ function Gamepage() {
 
   const first = useRef(true) //in order to prevent the effect of react strict we use ref to keep alive the first var which tells us if the useEffect hasnt been executed yes
 
-  useEffect(()=>
+  useEffect(()=>//fetching deck only once
   {
     if(first.current){
       first.current =false;
@@ -88,8 +72,6 @@ function Gamepage() {
       const data = await res.json();
       setDeck(data);
   }
-
-  const initCard = ()=>{ drawToPlayer(); /*deck.slice(0,4).map((card,index)=>{return drawCard(index%2===0?'player':'dealer')})*/}
   
   const countCards = (hand)=>{
     let res=0;
@@ -129,53 +111,37 @@ function Gamepage() {
 
   const drawCard = (target) =>
   {
-    let index = currentToDraw === 0 ? playerHand.length+dealerHand.length : currentToDraw;
+    let index =  playerHand.length+dealerHand.length;
+
     if(target==='dealer' && !dealerHand.includes(deck[index]))
       {
          setDealerHand((prev)=>[...prev, deck[index]])
-        currentToDraw++;
       }
 
     else if(target==='player'&& !playerHand.includes(deck[index]))
       { 
          setPlayerHand((prev)=>[...prev, deck[index]])
-        currentToDraw++;
       }
   }
 
-  const showCards = ()=>{
-    let index =0;
-    if(showDrawnPlayerCard.current){
-      index =playerHand.length-1;
-      showDrawnPlayerCard.current = false;
-      console.log(<Card 
-        key={index} 
-        stl={styles.card} 
-        cardImg={deck[playerHand.length+dealerHand.length-1].imgPath} 
-        animation={drawPlayerCardAnimation(index)}/>);
-    return (
-      <Card 
-        key={index} 
-        stl={styles.card} 
-        cardImg={deck[playerHand.length+dealerHand.length-1].imgPath} 
-        animation={drawPlayerCardAnimation(index)}/>);
-    }
+  const resetGame = ()=>{
+    setScreenState('placeBet');
+    getDeck();
+    setDealerHand([]);
+    setPlayerHand([]);
+  }
 
-    else if(showDrawnDealerCard.current){
-      index =dealerHand.length-1;
-      showDrawnDealerCard.current = false;
-      console.log(<Card 
-        key={index} 
-        stl={index===0?styles.firstDealerCard:styles.card} 
-        cardImg={index===0?'upsidedownCard':deck[playerHand.length+dealerHand.length-1].imgPath} 
-        animation={drawDealerCardAnimation(index)}/>);
-    return (
-      <Card 
-        key={index} 
-        stl={index===0?styles.firstDealerCard:styles.card} 
-        cardImg={index===0?'upsidedownCard':deck[playerHand.length+dealerHand.length-1].imgPath} 
-        animation={drawDealerCardAnimation(index)}/>);
-    }
+  const getEndPrompt = (targetHand)=>{
+    let prompt = ''
+      if(isBlackJack(targetHand))
+        prompt= 'BlackJack'
+
+      else if (countCards(targetHand).cardsCount > 21)
+        prompt = 'Bust'
+
+      else prompt = countCards(targetHand).cardsCount  
+
+    return prompt;
   }
 
   return (
@@ -183,11 +149,9 @@ function Gamepage() {
         
         <Card stl={styles.deck} cardImg={'upsidedownCard'} />
 
-        {(showDrawnDealerCard|| showDrawnPlayerCard)&&showCards()}
-        
         {
         (screenState==='placeBet')&&
-        <img src={require('../assets/btnPlaceBet.png')} alt='' style={styles.btnPlaceBet} onClick={()=>{initCard(); setScreenState('gameStart'); }} />
+        <img src={require('../assets/btnPlaceBet.png')} alt='' style={styles.btnPlaceBet} onClick={()=>{drawToPlayer(); setScreenState('gameStart'); }} />
         }
 
         {
@@ -195,30 +159,61 @@ function Gamepage() {
         }
 
         {
-          screenState==='gameStart' && <img src={require('../assets/btnStand.png')} alt='' style={styles.btnStand} onClick={()=>{ setScreenState('dealersTurn') ; }} />
+          screenState==='gameStart' && <img src={require('../assets/btnStand.png')} alt='' style={styles.btnStand} onClick={()=>{ setScreenState('dealersTurn') }} />
         }
 
         {
-          screenState==='gameStart' && <img src={require('../assets/btnDouble.png')} alt='' style={styles.btnDouble} onClick={()=>{ console.log('money is doubled'); drawToPlayer(); setScreenState('dealersTurn'); }} />
-        }
-        
-        {
-          screenState==='dealersTurn' && <Card stl={styles.revealedCard} cardImg={dealerHand[0].imgPath} />
+          (screenState==='gameStart' && playerHand.length<=2) && <img src={require('../assets/btnDouble.png')} alt='' style={styles.btnDouble} onClick={()=>{ console.log('money is doubled'); drawToPlayer(); setScreenState('dealersTurn'); setTimeout(()=>{},500) }} />
         }
 
+        { (screenState!=='placeBet') && 
+          <Typography 
+          sx={styles.dealersCounter}
+          variant='h2'> 
+          {getEndPrompt(dealerHand)}
+          </Typography>
+        } 
+
+        { (screenState!=='placeBet') && 
+          <Typography 
+          sx={styles.playersCounter}
+          variant='h2'> 
+          {getEndPrompt(playerHand)}
+          </Typography>
+        }
+
+        { (screenState!=='placeBet') && playerHand.map((value, index)=>{
+          return <Card 
+          key={index} 
+          stl={styles.card} 
+          cardImg={value.imgPath} 
+          animation={drawPlayerCardAnimation(index)}/>
+        })} 
+
+        { (screenState!=='placeBet') && dealerHand.map((value, index)=>{
+          return <Card 
+          key={index} 
+          stl={index===0  ? styles.firstDealerCard:styles.card} 
+          cardImg={(index===0 && screenState==='gameStart')?'upsidedownCard':value.imgPath} 
+          animation={drawDealerCardAnimation(index)}/>
+        })} 
+
         {
-          screenState==='gameEnded' &&console.log(isPlayerWon() ?
-          `player wins ${countCards(playerHand).cardsCount} and dealer  ${countCards(dealerHand).cardsCount} ${countCards(dealerHand).isBusted ? 'dealer busted':''}`
+          screenState==='gameEnded' &&
+          <Typography 
+          sx={styles.results}
+          variant='h2'> 
+          {isPlayerWon() ?
+          `player wins ${isBlackJack(playerHand)?'BlackJack':countCards(playerHand).cardsCount}`
           :
-          `dealer wins ${countCards(dealerHand).cardsCount}  and player  ${countCards(playerHand).cardsCount} ${countCards(playerHand).isBusted ? 'player busted':''}`)
+          `dealer wins ${isBlackJack(dealerHand)?'BlackJack':countCards(dealerHand).cardsCount}`}
+        </Typography>
         }
 
         {screenState==='gameEnded' && setTimeout(()=>{
-          console.log('game ended'); 
           setTimeout(()=>{
-            setScreenState('placeBet')
+            resetGame();
           },2000);
-
           },3000)}
         
       </Box>
