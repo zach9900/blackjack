@@ -166,7 +166,7 @@ function Gamepage() {
           (screenState==='gameStart' && playerHand.length<=2) && <img src={require('../assets/btnDouble.png')} alt='' style={styles.btnDouble} onClick={()=>{ console.log('money is doubled'); drawToPlayer(); setScreenState('dealersTurn'); setTimeout(()=>{},500) }} />
         }
 
-        { (screenState!=='placeBet') && 
+        { (screenState==='dealersTurn' ||  screenState==='gameEnded' ) && 
           <Typography 
           sx={styles.dealersCounter}
           variant='h2'> 
