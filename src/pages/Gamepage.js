@@ -123,9 +123,10 @@ function Gamepage() {
     }
   };
 
-  const resetGame = () => {
+  const resetGame = async () => {
+    let data = await getDeck();
+    setDeck(data);
     setScreenState("placeBet");
-    getDeck();
     setDealerHand([]);
     setPlayerHand([]);
   };
